@@ -90,7 +90,7 @@ function userCardMaker(data){
   cardInfo.classList.add('card-info');
   personName.classList.add('name');
   userName.classList.add('username');
-  debugger
+
   userImg.setAttribute('src', data.avatar_url);
   personName.textContent = data.name;
   userName.textContent = data.login;
@@ -99,7 +99,7 @@ function userCardMaker(data){
   url.setAttribute('href', data.html_url)
   url.textContent =' address to user gitHub';
   userFollowers.textContent = `Followers: ${data.followers}`;
-  userFollowing.textContent = `Folling: ${data.following}`;
+  userFollowing.textContent = `Following: ${data.following}`;
   userBio.textContent = `Bio: ${data.bio}`;
   //creating hierarchy
   card.appendChild(userImg);
