@@ -23,12 +23,11 @@ and append the returned markup to the DOM as a child of .cards
 const cardDom = document.querySelector('.cards');
 axios.get('https://api.github.com/users/Margarita-Salazar')
 .then((res)=>{
-  console.log(res)
   cardDom.append(userCardMaker(res.data));
 })
 .catch((err)=>{
   console.log('something went wrong', err)
-})
+});
 
 /*
   STEP 5: Now that you have your own card getting added to the DOM, either
@@ -40,18 +39,44 @@ axios.get('https://api.github.com/users/Margarita-Salazar')
     Using that array, iterate over it, requesting data for each user, creating a new card for each
     user, and adding that card to the DOM.
 */
+// const followersArray = [ 'tetondan', 'dustinmyers', 'justsml', 'luishrd', 'bigknell' ];
+// followersArray.forEach((name)=>{
+//   axios(`https://api.github.com/users/${name}`)
+//   .then((res)=>{
+//     cardDom.append(userCardMaker(res.data))
+//   })
+//   .catch((err)=>{
+//     console.log('something went wrong', err)
+//   })
+// })
 
-const followersArray = [ 'tetondan', 'dustinmyers', 'justsml', 'luishrd', 'bigknell', ];
-followersArray.forEach((name)=>{
-  axios(`https://api.github.com/users/${name}`)
+// Instead of manually creating a list of followers, do it programmatically. Create a function that requests the followers data from the API after it has received your data and create a card for each of your followers. Hint: you can chain promises.
+
+// creating a function to make followers user card from api user
+function fetchFollowers(userName){
+  axios.get(`https://api.github.com/users/${userName}`)
   .then((res)=>{
-    cardDom.append(userCardMaker(res.data))
+      axios.get(res.data.followers_url)
+      .then((res)=>{
+        res.data.forEach( user => {
+          axios.get(`https://api.github.com/users/${user.login}`)
+          .then((res)=>{
+            cardDom.append(userCardMaker(res.data))
+          })
+          .catch((err)=>{
+            console.log(err)
+          });
+        });
+      })
+      .catch((err)=>{
+        console.log(err)
+    });
   })
   .catch((err)=>{
-    console.log('something went wrong', err)
-  })
-})
-
+    console.log(err)
+  });
+}
+fetchFollowers('Margarita-Salazar')
 /*
   STEP 3: Create a function that accepts a single object as its only argument.
     Using DOM methods and properties, create and return the following markup:
@@ -96,11 +121,11 @@ function userCardMaker(data){
   userName.textContent = data.login;
   userLocation.textContent = data.userLocation;
   userProfile.textContent = 'Profile: ';
-  url.setAttribute('href', data.html_url)
+  url.setAttribute('href', data.html_url);
   url.textContent =' address to user gitHub';
   userFollowers.textContent = `Followers: ${data.followers}`;
   userFollowing.textContent = `Following: ${data.following}`;
-  userBio.textContent = `Bio: ${data.bio}`;
+  userBio.textContent = !data.bio ? "Bio: user doesn't have a bio" : `Bio: ${data.bio}`;
   //creating hierarchy
   card.appendChild(userImg);
   card.appendChild(cardInfo);
